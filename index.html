@@ -8,11 +8,60 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap">
 
     <style>
+        [v-cloak]{display: none;}
         body{font-family: Poppins,'san-serif';}
+        .box{
+            display: grid;
+            place-content: center;
+            height: 200px;
+            width: 200px;
+            background: hsl(144, 100%, 50%);
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        .box:nth-of-type(2){background: hsl(77, 100%, 50%) !important;}
+        .box:nth-of-type(3){background: hsl(44, 100%, 50%) !important;}
+        .box:nth-of-type(4){background: hsl(30, 100%, 50%) !important;}
+        .center{
+            display: grid;
+            place-content: center;
+        }
+        .flex{
+            display: flex;
+        }
     </style>
 </head>
+
 <body>
-    <center> <h1>A Vue Project</h1> </center>
+
+    <main id="app" v-cloak class="center">
+        <h1> {{ greeting }} </h1>
+        <input v-model="greeting">
+        <div class="flex">
+            <div v-if="isVisible" class="box">Box 1</div>
+            <div v-else-if="isVisible2" class="box">Box 2</div>
+            <div v-else="isVisible3" class="box">Box 3</div>
+            <div v-show="toggleBox4" class="box">Box 4</div>
+        </div>
+    </main>
+
+
     <script src="https://unpkg.com/vue@next"></script>
+    <script>
+        let app = Vue.createApp({             // This is vue instance & options below are called options object
+            data: function(){                 // This object returns objects    
+                return{
+                    greeting: 'Two way data binding',
+                    isVisible: true,
+                    isVisible2: true,
+                    isVisible3: true,
+                    toggleBox4: true
+                }
+            }
+        })
+        app.mount('#app')
+    </script>
+
+
 </body>
 </html>
