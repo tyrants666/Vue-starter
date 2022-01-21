@@ -10,6 +10,25 @@
     <style>
         [v-cloak]{display: none;}
         body{font-family: Poppins,'san-serif';}
+        h2{margin-top: 40px;}
+        h3{margin-top: 0;}
+        input{
+            display: block;
+            margin-bottom: 6px;
+            outline: none;
+            border: 1px solid #888;
+            border-radius: 3px;
+            padding: 5px 11px;
+    }
+        button{
+            height: 35px;
+            margin-bottom: 6px;
+            background: #9f9f9f;
+            border: none;
+            border-radius: 5px;
+            font-weight: 500;
+            font-family: 'Poppins';
+        }
         .box{
             display: grid;
             place-content: center;
@@ -17,7 +36,7 @@
             width: 200px;
             background: hsl(144, 100%, 50%);
             border-radius: 15px;
-            margin-top: 20px;
+            margin-top: 5px;
         }
         .box:nth-of-type(2){background: hsl(77, 100%, 50%) !important;}
         .box:nth-of-type(3){background: hsl(44, 100%, 50%) !important;}
@@ -33,19 +52,32 @@
 </head>
 
 <body>
-
+    
+     <!-- VUE MOUNTED COMPONENT --------------------------------------------------------------------------->
     <main id="app" v-cloak class="center">
-        <h1> {{ greeting }} </h1>
+        <h2> {{ greeting }} </h2>
         <input v-model="greeting">
-        <div class="flex">
+
+        <h2>Vue Directives</h2>
+        <div v-if="toggleBoxes" class="flex">
             <div v-if="isVisible" class="box">Box 1</div>
             <div v-else-if="isVisible2" class="box">Box 2</div>
             <div v-else="isVisible3" class="box">Box 3</div>
             <div v-show="toggleBox4" class="box">Box 4</div>
-        </div>
+        </div> 
+
+        <h2>Events / Methods</h2>
+        <button v-on:click="isVisible = !isVisible">Toggle Box 1 using v-on:click</button>
+        <button @click="toggleBoxes = !toggleBoxes">Toggle Box using @click</button>
+        <button @click="newToggleBoxes">Toggle Boxes using new Method</button> <!-- Assign method newToggleBoxes -->
+        <input @keyup.enter="greet(check_key_press)" v-model="check_key_press"> <!-- .enter is a event modifier can use numbers instead to point keyboard buttons -->
+
+        <h2>Components</h2>
+        <login-form />       <!-- Child Component -->
+        
     </main>
 
-
+    <!-- SCRIPTS ------------------------------------------------------------------------------------------>
     <script src="https://unpkg.com/vue@next"></script>
     <script>
         let app = Vue.createApp({             // This is vue instance & options below are called options object
@@ -55,13 +87,77 @@
                     isVisible: true,
                     isVisible2: true,
                     isVisible3: true,
-                    toggleBox4: true
+                    toggleBox4: true,
+                    toggleBoxes: true,
+                    check_key_press: 'Press Enter to log to console',
+                }
+            },
+            methods: {                         // Object with many functions inside
+                newToggleBoxes(){
+                    this.toggleBoxes = !this.toggleBoxes
+                },
+                greet(message){
+                    console.log(message);
                 }
             }
         })
+        
+        //Parent Component ---------------------------------------------
+        app.component('login-form',{
+            template:`
+                <form @submit.prevent="handleSubmit">
+                    <h3> {{ title }} </h3>
+                    <custom-input inputType="text" v-model="names" label="Name:" />
+                    <custom-input inputType="email" v-model="email" v-bind:label="emailLabel" />
+                    <custom-input inputType="password" v-model="password" :label="passLabel" /> 
+                    <button>Submit</button>
+                </form>    
+            `,
+            components: ['custom-input'],    //list all child components here
+            data(){
+                return{
+                    title: "Login Form",
+                    names: '',
+                    email: '',
+                    password: '',
+                    emailLabel:"Email",
+                    passLabel:"Password",
+                }
+            },
+            methods: {
+                handleSubmit(){
+                    console.log('Name : '+ this.names);
+                    console.log('Email : '+ this.email);
+                    console.log('Password : '+ this.password);
+                }
+            }
+        })
+        
+        //Child Component ---------------------------------------------
+        app.component('custom-input',{
+            template:`
+                <label>
+                    {{ label }}
+                    <input :type="inputType" v-model="inputValue">
+                </label>
+            `,
+            props: ['label', 'modelValue', 'inputType'],  //list all variables here as string that is passed down from parent component using [v-bind]
+            computed:{              // usually used for dynamic value
+                inputValue: {       //Key
+                    get(){
+                        return this.modelValue;    //gets the value from parent & returns in child/here                             
+                    },
+                    set(value){
+                        // console.log(value);        
+                        this.$emit('update:modelValue', value)   
+                        // emit events that other components can listen to 
+                        // We can use events like click,mouseenter or create a custom event like in above case "update" i.e provided by vue;
+                    }
+                }
+            },
+        })
         app.mount('#app')
     </script>
-
 
 </body>
 </html>
