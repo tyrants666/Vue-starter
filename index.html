@@ -48,6 +48,7 @@
         .flex{
             display: flex;
         }
+        .m0{margin: 0;}
     </style>
 </head>
 
@@ -59,6 +60,7 @@
         <input v-model="greeting">
 
         <h2>Vue Directives</h2>
+        <h6 class="m0">Note: <i>Boxes below are implemented using vue conditional directives <b>v-if, v-else-if, v-else</b> </i> </h6>
         <div v-if="toggleBoxes" class="flex">
             <div v-if="isVisible" class="box">Box 1</div>
             <div v-else-if="isVisible2" class="box">Box 2</div>
@@ -73,8 +75,11 @@
         <input @keyup.enter="greet(check_key_press)" v-model="check_key_press"> <!-- .enter is a event modifier can use numbers instead to point keyboard buttons -->
 
         <h2>Components</h2>
-        <login-form />       <!-- Child Component -->
-        
+        <login-form /> <!-- Child Component -->
+
+        <!-- 🐞Bug / Im unable to create this new loop component below it doesnt gets rendered on html after vue is initialized -->
+        <!-- <h2>Loops</h2>
+        <loops /> -->
     </main>
 
     <!-- SCRIPTS ------------------------------------------------------------------------------------------>
@@ -111,12 +116,42 @@
                     <custom-input inputType="email" v-model="email" v-bind:label="emailLabel" />
                     <custom-input inputType="password" v-model="password" :label="passLabel" /> 
                     <button>Submit</button>
+
+                    <h2>Loops</h2>
+                    <i> <h6 class="m0">Note: 🔶v-for 🔶 use key props</h6> </i>
+                    <p v-for="k in inputs2" :key="k">{{ k }}</p>
+                    <i> <h6 class="m0">Note: 🔶 inputs using v-for Loop</h6> </i>
+                    <custom-input 
+                        v-for="(input, i) in inputs"
+                        key="i"
+                        v-model="input.value"
+                        :label="input.Label"
+                        :type="input.type"
+                    />
                 </form>    
             `,
             components: ['custom-input'],    //list all child components here
             data(){
                 return{
                     title: "Login Form",
+                    inputs: [
+                        {
+                            label: 'Name',
+                            value: '',
+                            type: 'text',
+                        },
+                        {
+                            label: 'Email',
+                            value: '',
+                            type: 'email',
+                        },
+                        {
+                            label: 'Password',
+                            value: '',
+                            type: 'password',
+                        },
+                    ],
+                    inputs2: ['name','email','password'],
                     names: '',
                     email: '',
                     password: '',
@@ -156,6 +191,23 @@
                 }
             },
         })
+        
+        //Loop Component ----------------------------------------------
+        // app.component('loops',{
+        //     template: `
+        //         <h6 v-for="val in inputs" :key="val"> {{ val }} </h6>
+        //     `,
+        //     data(){
+        //         return{
+        //             inputs: [
+        //             'names',
+        //             'email',
+        //             'password',
+        //             ]
+        //         }
+        //     }
+        // })
+        //Mount Root Component ---------------------------------------------
         app.mount('#app')
     </script>
 
